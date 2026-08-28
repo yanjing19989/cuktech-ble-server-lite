@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cuktech-mqtt-server"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = ["bleak>=0.21", "cryptography>=41", "paho-mqtt>=2.0", "pyyaml>=6.0"]
+
+[project.scripts]
+cuktech-server = "cuktech_server.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,18 @@
+ble:
+  mac: "AA:BB:CC:DD:EE:FF"
+  token: "00112233445566778899aabb"
+mqtt:
+  host: "localhost"
+  port: 1883
+  username: ""
+  password: ""
+  topic_prefix: "cuktech/charger"
+  keepalive: 60
+server:
+  reconnect_base: 1.0
+  reconnect_max: 300.0
+  command_timeout: 10.0
+  protocol_refresh_interval: 600.0
+  port_verify_interval: 15.0
+  port_stale_timeout: 45.0
+  log_level: "INFO"
