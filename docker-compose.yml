@@ -1,0 +1,17 @@
+services:
+  cuktech-ble-server-lite:
+    build: .
+    image: ghcr.io/yanjing19989/cuktech-ble-server-lite:latest
+    container_name: cuktech-ble-server-lite
+    network_mode: host
+    privileged: true
+    volumes:
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+      - cuktech-data:/data
+    environment:
+      CUKTECH_CONFIG_PATH: /data/config.yaml
+      TZ: Asia/Shanghai
+    restart: unless-stopped
+
+volumes:
+  cuktech-data:
