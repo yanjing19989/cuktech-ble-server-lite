@@ -4,6 +4,8 @@
 
 本服务不包含网页、HTTP API、SSE、数据库、历史记录或云端登录功能。
 
+详细的模块职责、BLE 认证时序、加密/分帧、状态机、MQTT 契约和维护约定请参阅[架构设计文档](ARCHITECTURE.md)。
+
 ## 运行要求
 
 - Linux 主机
@@ -91,7 +93,9 @@ cuktech-server
 | `reconnect_base` | `1.0` | 首次重连等待秒数 |
 | `reconnect_max` | `300.0` | 最大重连等待秒数 |
 | `command_timeout` | `10.0` | BLE 命令和通知等待超时 |
-| `settings_interval` | `60.0` | 设置状态低频校正周期 |
+| `protocol_refresh_interval` | `600.0` | PIID17/18 协议能力校正周期 |
+| `port_verify_interval` | `15.0` | 活动端口主动验证周期 |
+| `port_stale_timeout` | `45.0` | 活动端口无更新时的最终清零时间 |
 | `log_level` | `INFO` | `DEBUG`、`INFO`、`WARNING` 或 `ERROR` |
 
 ## MQTT 接口
@@ -175,4 +179,3 @@ sudo journalctl -u cuktech-mqtt-server -f
 - **频繁重连**：使用 `log_level: DEBUG` 查看认证或命令超时原因；避免同一设备同时运行多个 BLE 客户端。
 - **HA 显示旧数据**：确认 HA 与 server 使用相同的 `topic_prefix`，并检查 Broker 中是否收到 `status` retained 消息。
 - **端口协议为 Unknown**：这是设备上报了未定义的 raw 协议编号；查看 `raw_protocol`，服务不会用电压猜测覆盖该值。
-
