@@ -140,8 +140,13 @@ class ChargerService:
 
     async def command(self, kind, data):
         if kind == "ble":
+            # BLE control is a lifecycle operation, not a device command.
+            # Apply it immediately even while disconnected/backing off so a
+            # later HA enable can wake the actor without waiting for a queue
+            # consumer or a reconnect attempt.
             self.enabled = bool(data)
             self._wake.set()
+            return
         try: self._commands.put_nowait((kind, data))
         except asyncio.QueueFull: _LOGGER.warning("command queue full")
 
@@ -161,7 +166,13 @@ class ChargerService:
                 for piid in PORT_PIIDS: self._port(piid, dict(ZERO_PORT))
                 self._status()
             if not self._stop.is_set() and self.enabled:
-                await asyncio.sleep(delay + random.uniform(0, min(delay * .2, 2.0))); delay = min(delay * 2, self.config.server.reconnect_max)
+                backoff = delay + random.uniform(0, min(delay * .2, 2.0))
+                try:
+                    await asyncio.wait_for(self._wake.wait(), timeout=backoff)
+                    self._wake.clear()
+                except asyncio.TimeoutError:
+                    pass
+                delay = min(delay * 2, self.config.server.reconnect_max)
 
     async def stop(self):
         self._stop.set(); self._wake.set(); self.enabled = False

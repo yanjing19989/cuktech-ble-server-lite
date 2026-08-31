@@ -3,16 +3,20 @@ import asyncio, logging, signal
 from .config import load_config
 from .mqtt import MqttBridge
 from .service import ChargerService
+from .http_compat import HAHttpCompat
 
 async def run():
     cfg = load_config(); logging.basicConfig(level=getattr(logging, cfg.server.log_level, logging.INFO), format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     loop = asyncio.get_running_loop(); bridge = MqttBridge(cfg, loop); service = ChargerService(cfg, bridge.publish)
-    await bridge.start(service); task = asyncio.create_task(service.run())
+    await bridge.start(service)
+    http = HAHttpCompat(service, cfg.server.host, cfg.server.port)
+    await http.start()
+    task = asyncio.create_task(service.run())
     stop = asyncio.Event()
     for sig in (signal.SIGINT, signal.SIGTERM):
         try: loop.add_signal_handler(sig, stop.set)
         except NotImplementedError: pass
-    await stop.wait(); await service.stop(); task.cancel(); await bridge.stop()
+    await stop.wait(); await service.stop(); task.cancel(); await http.stop(); await bridge.stop()
 
 def main(): asyncio.run(run())
 

@@ -9,6 +9,8 @@ mqtt:
   topic_prefix: "cuktech/charger"
   keepalive: 60
 server:
+  host: "0.0.0.0"
+  port: 8199
   reconnect_base: 1.0
   reconnect_max: 300.0
   command_timeout: 10.0

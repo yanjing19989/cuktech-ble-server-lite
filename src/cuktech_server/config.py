@@ -20,6 +20,8 @@ class MqttConfig:
 
 @dataclass
 class ServerConfig:
+    host: str = "0.0.0.0"
+    port: int = 8199
     reconnect_base: float = 1.0
     reconnect_max: float = 300.0
     command_timeout: float = 10.0
@@ -61,6 +63,8 @@ def load_config(path: str | Path | None = None) -> Config:
         keepalive=int(m.get("keepalive", 60)),
     )
     server = ServerConfig(
+        host=str(s.get("host", "0.0.0.0")),
+        port=int(s.get("port", 8199)),
         reconnect_base=float(s.get("reconnect_base", 1.0)),
         reconnect_max=float(s.get("reconnect_max", 300.0)),
         command_timeout=float(s.get("command_timeout", 10.0)),
