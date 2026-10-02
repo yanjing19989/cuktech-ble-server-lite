@@ -30,8 +30,6 @@ class ChargerService:
     def _on_port(self, piid: int, data: dict):
         if data.get("active"):
             self._ports_to_verify.add(piid)
-        else:
-            self._ports_to_verify.discard(piid)
         hw = self.protocol_for_port(piid)
         if hw in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
             names = {1: "5V", 2: "5V", 3: "QC", 4: "AFC", 5: "FCP", 6: "SCP", 7: "PD", 8: "PPS", 9: "PPS", 10: "UFCS"}
@@ -81,6 +79,7 @@ class ChargerService:
                 if value is not None: self.settings[str(piid)] = value
             except Exception as exc: _LOGGER.warning("GET PIID %d failed: %s", piid, exc)
         self.publish("settings", self.settings, True)
+        self._ports_to_verify.update(PORT_PIIDS)
         last_refresh = asyncio.get_running_loop().time()
         last_verify = last_refresh
         while self.enabled and not self._stop.is_set() and self.client.client and self.client.client.is_connected:

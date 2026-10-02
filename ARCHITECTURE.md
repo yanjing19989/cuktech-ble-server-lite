@@ -276,7 +276,7 @@ status / in_use | raw_protocol | current_raw | voltage_raw
 - PIID16 端口控制写入前先 GET，修改目标 bit 后 SET，保留其它端口位。
 - PIID21 协议开关由 HA 侧计算目标值后通过 `/set` 写入；维护该逻辑时必须保留未修改端口位和保留位。
 - 仅按 `protocol_refresh_interval` 低频 GET PIID17/18，用于校正硬件协议码。
-- 仅当 `_ports_to_verify` 非空时，每 `port_verify_interval` 验证一个活动端口；返回 status=0 会将其移出集合。
+- 连接后持续轮询四个端口，每 `port_verify_interval` 验证一个端口；这样即使设备没有推送空闲端口，HA 也能获得明确的 idle 状态。
 - `port_stale_timeout` 到期仍为 active 时发布零值，作为设备不发送拔出通知时的最终兜底。
 
 ## 11. 连接 actor 和重连策略

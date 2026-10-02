@@ -94,7 +94,7 @@ cuktech-server
 | `reconnect_max` | `300.0` | 最大重连等待秒数 |
 | `command_timeout` | `10.0` | BLE 命令和通知等待超时 |
 | `protocol_refresh_interval` | `600.0` | PIID17/18 协议能力校正周期 |
-| `port_verify_interval` | `15.0` | 活动端口主动验证周期 |
+| `port_verify_interval` | `15.0` | 端口主动验证周期，每次验证一个端口 |
 | `port_stale_timeout` | `45.0` | 活动端口无更新时的最终清零时间 |
 | `log_level` | `INFO` | `DEBUG`、`INFO`、`WARNING` 或 `ERROR` |
 
